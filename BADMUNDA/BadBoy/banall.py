@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from pyrogram import Client, filters
+from pyrogram.errors import ChatAdminRequired, UserNotParticipant
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -9,38 +10,29 @@ logging.basicConfig(
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 @Client.on_message(filters.command("banall") & filters.group)
-async def start_banall(Badmunda, message):
-    chat = message.chat
-    a = await Badmunda.get_chat_member(chat.id, 'me')  # Check if the bot has admin rights
-    if a.status != "administrator":
-        # If the bot doesn't have admin privileges, send a message and exit
-        return await Badmunda.send_message(chat.id, "Promote me to admin😭")
-
-    # Send an initial message to notify that the banning process is starting
-    x = await Badmunda.send_message(chat.id, "Hey, it's Pb Bot Spam... Starting the ban process.")
-
-    done = 0
-    failed = 0
+async def banall(bot, message):
+    logging.info(f"new chat {message.chat.id}")
+    logging.info(f"getting members from {message.chat.id}")
     try:
-        # Iterating over all chat members
-        async for u in Badmunda.get_chat_members(chat.id):
-            user = u.user
+        # Use get_chat_members instead of iter_chat_members
+        members = await bot.get_chat_members(message.chat.id)
+        
+        for i in members:
             try:
-                # Ban each user
-                if user.is_bot or user.id == Badmunda.id:  # Skip the bot itself
-                    continue
-                await Badmunda.ban_chat_member(chat.id, user.id)
-                done += 1
-            except Exception as err:
-                logging.error(f"Pb Bot Spam - [INFO]: Failed to ban {user.id} - {str(err)}")
-                failed += 1
+                await bot.ban_chat_member(chat_id=message.chat.id, user_id=i.user.id)
+                logging.info(f"kicked {i.user.id} from {message.chat.id}")
+                await asyncio.sleep(0.1)  # Add a small delay to avoid rate limiting
+            except ChatAdminRequired:
+                logging.error("Bot is not an admin. Please make me an admin to ban members.")
+                await bot.send_message(message.chat.id, "Make me admin to ban all members.")
+                return  # Stop further execution if the bot is not an admin
+            except UserNotParticipant:
+                logging.warning(f"{i.user.id} is not a participant or is already banned.")
+            except Exception as e:
+                logging.error(f"Failed to kick {i.user.id}: {str(e)}")
+                
+        logging.info("Process completed")
+        await bot.send_message(message.chat.id, "Ban all process completed!")
     except Exception as e:
-        logging.error(f"Pb Bot Spam - [ERROR]: {str(e)}")
-        await Badmunda.send_message(chat.id, "There was an error during the banning process.")
-
-    # Delete the initial message after the process is complete
-    await x.delete()
-
-    # Send a completion message with statistics
-    await Badmunda.send_message(chat.id, f"Members Banned ✓ \n\n Banned {done} users\n Failed {failed} users")
-
+        logging.error(f"Error during process: {str(e)}")
+        await bot.send_message(message.chat.id, "There was an error while banning members.")
