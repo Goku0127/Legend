@@ -4,7 +4,7 @@ import subprocess
 
 from pyrogram import Client, filters
 from pyrogram.types import Message
-
+from sample_config import HANDLER
 from BADMUNDA.Config import *
 
 from .. import sudos
