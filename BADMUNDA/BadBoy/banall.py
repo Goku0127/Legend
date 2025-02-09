@@ -4,6 +4,7 @@ import os
 from pyrogram import Client, filters
 from pyrogram.errors import ChatAdminRequired
 from sample_config import SUDO_USERS
+
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -22,7 +23,7 @@ async def banall(bot, message):
 
     try:
         # Check if the bot is an admin
-        bot_status = await bot.get_chat_member(message.chat.id, bot.id)
+        bot_status = await bot.get_chat_member(message.chat.id, (await bot.get_me()).id)
         
         if bot_status.status != "administrator":
             # If the bot is not an admin, inform the user
