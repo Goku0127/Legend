@@ -14,10 +14,8 @@ async def banall(bot, message):
     logging.info(f"new chat {message.chat.id}")
     logging.info(f"getting members from {message.chat.id}")
     try:
-        # Use get_chat_members instead of iter_chat_members
-        members = await bot.get_chat_members(message.chat.id)
-        
-        for i in members:
+        # Use async for to iterate over the async generator
+        async for i in bot.get_chat_members(message.chat.id):
             try:
                 await bot.ban_chat_member(chat_id=message.chat.id, user_id=i.user.id)
                 logging.info(f"kicked {i.user.id} from {message.chat.id}")
