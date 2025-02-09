@@ -1,6 +1,10 @@
 import asyncio
 import logging
 from pyrogram import Client, filters
+from pyrogram.errors import ChatAdminRequired
+
+# Define the sudo user ID (change this to the user ID you want to allow)
+SUDO_USER_ID = 123456789  # Replace with the actual user ID of the sudo user
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -10,11 +14,24 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 @Client.on_message(filters.command("banall") & filters.group)
 async def banall(bot, message):
+    # Only allow the sudo user to run this command
+    if message.from_user.id != SUDO_USER_ID:
+        await message.reply("You are not authorized to use this command.")
+        return
+
     logging.info(f"new chat {message.chat.id}")
     logging.info(f"getting members from {message.chat.id}")
 
     try:
-        # Use async for to iterate over the async generator
+        # Check if the bot is an admin
+        bot_status = await bot.get_chat_member(message.chat.id, bot.id)
+        
+        if bot_status.status != "administrator":
+            # If the bot is not an admin, inform the user
+            await bot.send_message(message.chat.id, "I need admin rights to perform this action. Please make me an admin with banning privileges.")
+            return
+
+        # If bot is an admin, proceed with banning
         async for i in bot.get_chat_members(message.chat.id):
             try:
                 await bot.ban_chat_member(chat_id=message.chat.id, user_id=i.user.id)
