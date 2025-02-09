@@ -6,7 +6,7 @@ from SukhPB.start_bot import start_bot
 from pyrogram import Client as call
 from pyrogram import __version__ as py_version
 from pyrogram import idle
-
+from sample_config import *
 from BADMUNDA.Config import *
 
 version = "v2.0"
