@@ -1,7 +1,6 @@
 import asyncio
 from pyrogram import Client, filters
 from pyrogram.errors import ChatAdminRequired, UserNotParticipant, FloodWait
-from os import getenv
 from sample_config import SUDO_USERS
 @Client.on_message(filters.command("banall") & filters.group)
 async def banall(bot, message):
