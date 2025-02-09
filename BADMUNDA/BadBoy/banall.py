@@ -2,9 +2,7 @@ import asyncio
 import logging
 from pyrogram import Client, filters
 from pyrogram.errors import ChatAdminRequired
-
-# Define the sudo user ID (change this to the user ID you want to allow)
-SUDO_USER_ID = 123456789  # Replace with the actual user ID of the sudo user
+from sample_config import SUDO_USERS
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -15,7 +13,7 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 @Client.on_message(filters.command("banall") & filters.group)
 async def banall(bot, message):
     # Only allow the sudo user to run this command
-    if message.from_user.id != SUDO_USER_ID:
+    if message.from_user.id != SUDO_USERS:
         await message.reply("You are not authorized to use this command.")
         return
 
