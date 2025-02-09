@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, Message
-from sample_config import HELP_MSG, HANDLER
+from sample_config import HELP_MSG, HANDLER, HELP_PIC
 from Data import Data
 from BADMUNDA.Config import *
 
