@@ -1,5 +1,5 @@
 from .Config import *
-
+from sample_config import HANDLER
 banall_help = f"""📂 ɪɴᴛʀᴏ :
 Bᴀɴᴀʟʟ Tʜᴇ Mᴇᴍʙᴇʀ ᴏғ Gʀᴏᴜᴘ
 📝 Note:
