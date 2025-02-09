@@ -14,7 +14,7 @@ group_username = "@PBX_CHAT"
 logging.basicConfig(format="%(levelname)s  %(message)s", level=logging.INFO)
 
 
-if ":" in BOT_TOKEN:
+if BOT_TOKEN:
     Client1 = call(
         "BadSpam",
         api_id=APP_ID,
